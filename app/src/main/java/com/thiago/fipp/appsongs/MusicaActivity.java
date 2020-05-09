@@ -1,5 +1,6 @@
 package com.thiago.fipp.appsongs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ public class MusicaActivity extends AppCompatActivity {
     private EditText etTitulo, etAno, etDuracao, etInterprete;
     private Spinner sGeneros;
     private Button bSalvarMusica, bCancelarMusica;
+    private Boolean adicionar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,7 +37,38 @@ public class MusicaActivity extends AppCompatActivity {
         sGeneros = findViewById(R.id.sGeneros);
         bSalvarMusica = findViewById(R.id.bSalvarMusica);
         bCancelarMusica = findViewById(R.id.bCancelarMusica);
-        carregarGeneros();
+
+
+        GeneroDAL generoDAL = new GeneroDAL(MusicaActivity.this);
+        List<Genero> generos = generoDAL.get("");
+
+        carregarGeneros(generos);
+
+        Intent intent = getIntent();
+        final int idMusica = intent.getIntExtra("idMusica", 0);
+        if (idMusica > 0) {
+            Musica musica = new MusicaDAL(MusicaActivity.this).get(idMusica);
+            if (musica != null) {
+
+                adicionar = false;
+
+                etTitulo.setText(musica.getTitulo());
+                etAno.setText(""+musica.getAno());
+                String duracao = String.format("%2.2f", musica.getDuracao());
+                duracao = duracao.replace(",", ":");
+                if (musica.getDuracao() < 10) {
+                    duracao = "0"+duracao;
+                }
+                etDuracao.setText(duracao);
+                etInterprete.setText(musica.getInterprete());
+                int index = 0;
+                while (index < generos.size() && generos.get(index).getId() != musica.getGenero().getId())
+                    index++;
+                sGeneros.setSelection(index);
+            }
+        } else {
+            adicionar = true;
+        }
 
         bSalvarMusica.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,11 +84,22 @@ public class MusicaActivity extends AppCompatActivity {
                     Genero genero =  (Genero) sGeneros.getSelectedItem();
                     musica = new Musica(ano, titulo, interprete, genero, duracao);
                     MusicaDAL musicaDAL = new MusicaDAL(MusicaActivity.this);
-                    if (musicaDAL.salvar(musica)) {
-                        toast = Toast.makeText(MusicaActivity.this, "Música adicionada com sucesso.", Toast.LENGTH_SHORT);
-                        limparTela();
+
+                    if (adicionar) {
+                        if (musicaDAL.salvar(musica)) {
+                            toast = Toast.makeText(MusicaActivity.this, "Música adicionada com sucesso.", Toast.LENGTH_SHORT);
+                            limparTela();
+                        } else {
+                            toast = Toast.makeText(MusicaActivity.this, "Erro ao adicionar a música.", Toast.LENGTH_SHORT);
+                        }
                     } else {
-                        toast = Toast.makeText(MusicaActivity.this, "Erro ao adicionar a música.", Toast.LENGTH_SHORT);
+                        musica.setId(idMusica);
+                        if (musicaDAL.alterar(musica)) {
+                            toast = Toast.makeText(MusicaActivity.this, "Música alterada com sucesso.", Toast.LENGTH_SHORT);
+                            limparTela();
+                        } else {
+                            toast = Toast.makeText(MusicaActivity.this, "Erro ao alterar a música.", Toast.LENGTH_SHORT);
+                        }
                     }
                 } else {
                     toast = Toast.makeText(MusicaActivity.this, msg, Toast.LENGTH_SHORT);
@@ -104,9 +148,7 @@ public class MusicaActivity extends AppCompatActivity {
         return "";
     }
 
-    private void carregarGeneros() {
-        GeneroDAL generoDAL = new GeneroDAL(MusicaActivity.this);
-        List<Genero> generos = generoDAL.get("");
+    private void carregarGeneros(List<Genero> generos) {
         sGeneros.setAdapter(new ArrayAdapter<Genero>(MusicaActivity.this, android.R.layout.simple_spinner_item, generos));
     }
 

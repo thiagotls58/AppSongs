@@ -59,7 +59,6 @@ public class MusicaDAL {
         if (cursor.moveToFirst())
             o = new Musica(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3), gdal.get(cursor.getInt(4)), cursor.getDouble(5));
         cursor.close();
-        ;
         return o;
     }
 
@@ -69,6 +68,7 @@ public class MusicaDAL {
         String sql = "select * from " + TABLE;
         if (!filtro.equals(""))
             sql += " where " + filtro;
+        sql += " order by mus_titulo";
 
         Cursor cursor = con.consultar(sql);
         if (cursor.moveToFirst())

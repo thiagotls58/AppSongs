@@ -1,16 +1,20 @@
 package com.thiago.fipp.appsongs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.thiago.fipp.appsongs.db.bean.Musica;
+import com.thiago.fipp.appsongs.db.dal.MusicaDAL;
 
 import java.util.List;
 
@@ -36,11 +40,39 @@ public class MusicasAdapter extends ArrayAdapter<Musica> {
         TextView tvInterprete = convertView.findViewById(R.id.tvInterprete);
         TextView tvGenero = convertView.findViewById(R.id.tvGenero);
 
-        Musica musica = this.getItem(position);
+        final Musica musica = this.getItem(position);
 
         tvTitulo.setText(musica.getTitulo());
         tvInterprete.setText(musica.getInterprete());
         tvGenero.setText(musica.getGenero().getNome());
+
+        ImageButton bEditMusica = convertView.findViewById(R.id.bEditMusica);
+        bEditMusica.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), MusicaActivity.class);
+                intent.putExtra("idMusica", musica.getId());
+                getContext().startActivity(intent);
+            }
+        });
+
+
+        ImageButton bRemoveMusica = convertView.findViewById(R.id.bRemoveMusica);
+        bRemoveMusica.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MusicaDAL musicaDAL = new MusicaDAL(getContext());
+                Boolean apagou = musicaDAL.apagar(musica.getId());
+                Toast toast;
+                if (apagou) {
+                    remove(musica);
+                    toast = Toast.makeText(getContext(), "Música apagada com sucesso..", Toast.LENGTH_SHORT);
+                } else {
+                    toast = Toast.makeText(getContext(), "Erro ao apagar a música.", Toast.LENGTH_SHORT);
+                }
+                toast.show();
+            }
+        });
 
         return convertView;
     }

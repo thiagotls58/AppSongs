@@ -1,35 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/tvTitulo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:text="Take A Look Around"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+    android:layout_height="50dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="246dp"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvInterprete"
-            android:layout_width="276dp"
+            android:id="@+id/tvTitulo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Limp Bizkit" />
+            android:layout_marginLeft="10dp"
+            android:text="Take A Look Around"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvGenero"
-            android:layout_width="77dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Rock" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp">
+
+            <TextView
+                android:id="@+id/tvInterprete"
+                android:layout_width="148dp"
+                android:layout_height="wrap_content"
+                android:text="Limp Bizkit"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvGenero"
+                android:layout_width="155dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Rock"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/bEditMusica"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:background="#00FFFFFF"
+        app:srcCompat="@drawable/ic_edit_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/bRemoveMusica"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:background="#00FFFFFF"
+        app:srcCompat="@drawable/ic_delete_black_24dp" />
+
 </LinearLayout>
