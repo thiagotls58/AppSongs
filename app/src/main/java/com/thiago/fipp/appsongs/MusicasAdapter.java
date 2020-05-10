@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.thiago.fipp.appsongs.db.bean.Musica;
 import com.thiago.fipp.appsongs.db.dal.MusicaDAL;
 
@@ -71,6 +72,34 @@ public class MusicasAdapter extends ArrayAdapter<Musica> {
                     toast = Toast.makeText(getContext(), "Erro ao apagar a música.", Toast.LENGTH_SHORT);
                 }
                 toast.show();
+            }
+        });
+
+        ImageButton bExibirLetra = convertView.findViewById(R.id.bExibirLetra);
+        bExibirLetra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String letra = "";
+                try {
+                    String url="https://api.vagalume.com.br/search.php"+
+                                "?art=" + musica.getInterprete() +
+                                "&mus=" + musica.getTitulo();
+                    AcessaWSTask task=new AcessaWSTask();
+                    String json = task.execute(url).get();
+
+                    Gson gson = new Gson();
+                    ApiVagalume apiVagalume = gson.fromJson(json, ApiVagalume.class);
+                    letra = apiVagalume.getMus().get(0).getText();
+                } catch (Exception e)
+                {
+                    letra = e.getMessage();
+                }
+                Intent intent = new Intent(getContext(), LetraMusicaActivity.class);
+                intent.putExtra("tituloMusica", musica.getTitulo());
+                intent.putExtra("interpreteMusica", musica.getInterprete());
+                intent.putExtra("letraMusica", letra);
+
+                getContext().startActivity(intent);
             }
         });
 
